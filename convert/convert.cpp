@@ -4,7 +4,7 @@ using namespace std;
 // Conversion constants
 #define CtoFRatio 1.80  
 #define CtoFOffset 32.00
-#define CtoKOffset 27.30
+#define CtoKOffset 273.0
 
 // Scale indentifiers
 #define DegC 'C'
@@ -61,14 +61,17 @@ double toFahrenheit( double T, char scale )
    case DegF:
    case Degf:
       outT = T;
+      break;
       
    case DegC:
    case Degc:
       outT = T * CtoFRatio + CtoFOffset;
+      break;
 
    case DegK:
    case Degk:
       outT = ( T - CtoKOffset ) * CtoFRatio + CtoFOffset;
+      break;
 
    default:
       break; 
@@ -87,14 +90,17 @@ double toCelsius( double T, char scale )
 	   case DegF:
 	   case Degf:
 	      outT = ( T - CtoFOffset ) / CtoFRatio;
+         break;
 	      
 	   case DegC:
 	   case Degc:
 	      outT = T;
+         break;
 	
 	   case DegK:
 	   case Degk:
 	      outT = T - CtoKOffset;
+         break;
 	
 	   default:
 	      break; 
@@ -113,14 +119,17 @@ double toKelvin( double T, char scale )
 	   case DegF:
 	   case Degf:
 	      outT = ( T - CtoFOffset ) / CtoFRatio + CtoKOffset;
+         break;
 	      
 	   case DegC:
 	   case Degc:
 	      outT = T + CtoKOffset;
+         break;
 	
 	   case DegK:
 	   case Degk: 
 	      outT = T;
+         break;
 	
 	   default:
 	      break; 
