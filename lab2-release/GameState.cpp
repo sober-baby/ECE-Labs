@@ -64,47 +64,50 @@ void GameState:: set_moveValid(bool value){
     moveValid = value;
 }
 
-//   // Set the selected row to value in the range (in the range 0..boardSize - 1)
-//   // An out of range value is ignored and the function just returns
-//   void set_selectedRow(int value);
+bool GameState:: get_gameOver(){
+    return gameOver;
+}
 
-//   // Set the selected column in the range (in the range 0..boardSize - 1)
-//   // An out of range value is ignored and the function just returns
-//   void set_selectedColumn(int value);
+void GameState:: set_gameOver(bool value){
+    gameOver = value;
+}
 
-//   // Get the moveValid value
-//   bool get_moveValid();
+bool GameState:: get_turn(){
+    return turn;
+}
 
-//   // Set the moveValid variable to value
-//   void set_moveValid(bool value);
+void GameState:: set_turn(bool value){
+    turn = value;
+}
 
-//   // Get the gameOver value
-//   bool get_gameOver();
 
-//   // Set the gameOver variable to value
-//   void set_gameOver(bool value);
+int GameState:: get_winner(){
+    return winner;
+}
 
-//   // Get the value of turn
-//   bool get_turn();
+void GameState:: set_turn(int value){
+    winner = value;
+}
 
-//   // Set the value of turn
-//   void set_turn(bool value);
+int GameState:: get_gameBoard(int rol, int col){
+    if(rol >= 0 && rol <= boardSize && col >= 0 && col <= boardSize){
+        return gameBoard[rol][col];
+    }else{
+        return Empty;
+    }
+}
 
-//   // Get the value of winner
-//   int get_winner();
+void GameState:: set_gameBoard(int rol, int col, int value){
+    if (value != -1 || value != 1){
+        return Empty;
+    }
+    if(rol >= 0 && rol <= 7 && col >= 0 && col <= 7){
+        gameBoard[rol][col] = value;
+    }else{
+        return Empty;
+    }
+}
 
-//   // Set the value of winner;
-//   void set_winner(int value);
-
-//   // Get the game board value at the board location at row and col
-//   // This method checks that row, col and value are in range/valid
-//   // and if not it returns Empty
-//   int get_gameBoard(int row, int col);
-
-//   // Set the game board value at the board location at row and col to value
-//   // This method checks that row, col and value are in range/valid and if not it
-//   // just returns
-//   void set_gameBoard(int row, int col, int value);
 
 
 
