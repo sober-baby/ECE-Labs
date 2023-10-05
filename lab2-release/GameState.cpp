@@ -41,17 +41,27 @@ int GameState:: get_selectedColumn(){
 }
 
 void GameState:: set_selectedRow(int value){
-    if (value >= 0 && value <= 7){
-        selectedRow = value;
-    }else{
-        return;
+    for(int i = 0; i < boardSize; i++){
+        if(gameBoard[i][selectedColumn] == 0){
+            selectedRow = value;
+            break;
+        }else{
+            moveValid = false;
+        }
     }
+    if(gameBoard[selectedRow][selectedColumn] == 0){
+        return;
+    }else{
+        moveValid = false;
+        return;
+        }
 }
 
 void GameState:: set_selectedColumn(int value){
-    if (value >= 0 && value <= 7){
+    if (value >= 0 && value <= boardSize){
         selectedColumn = value;
     }else{
+        moveValid = false;
         return;
     }
 }
@@ -68,7 +78,7 @@ bool GameState:: get_gameOver(){
     return gameOver;
 }
 
-void GameState:: set_gameOver(bool value){
+void GameState:: set_gameOver(bool value){ //set to true if the game is over
     gameOver = value;
 }
 
@@ -85,7 +95,7 @@ int GameState:: get_winner(){
     return winner;
 }
 
-void GameState:: set_turn(int value){
+void GameState:: set_winner(int value){
     winner = value;
 }
 
@@ -99,12 +109,12 @@ int GameState:: get_gameBoard(int rol, int col){
 
 void GameState:: set_gameBoard(int rol, int col, int value){
     if (value != -1 || value != 1){
-        return Empty;
+        return;
     }
-    if(rol >= 0 && rol <= 7 && col >= 0 && col <= 7){
+    if(rol >= 0 && rol <= boardSize && col >= 0 && col <= boardSize){
         gameBoard[rol][col] = value;
     }else{
-        return Empty;
+        return;
     }
 }
 

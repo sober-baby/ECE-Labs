@@ -18,8 +18,71 @@
 
 // Function prototypes (if you need)
 
+// return false if reach bound
+bool checkbound(int bound, int row, int col){
+  return !(row < 0 || col < 0 || row > bound || col > bound);
+}
+
 void playMove(GameState& game_state) {
-  // Change turn if move is valid,
-  // Change gameOver
-  // Change winner
+  // Change turn if move is valid. If unvalid, set move back to valid for next turn
+  if(game_state.get_moveValid() == true){
+    game_state.set_turn(!game_state.get_turn());
+  }else{
+    game_state.set_moveValid(true);
+    return;
+  }
+
+  //logic for detecting wins
+  int direction[4][2] = {
+    {1, 0},
+    {0, 1},
+    {1, 1},
+    {-1, 1}
+};
+
+  //logic for determining which player it is
+  int player;
+  if(game_state.get_turn() == true){
+    player = R; 
+  }else{
+    player = Y;
+  }
+
+  int sum;
+  for(int i = 0; i < 4; i++){
+    sum = 1;
+    int cur_index[2] = {game_state.get_selectedRow(), game_state.get_selectedColumn()};
+    int cur_row = cur_index[0] + direction[i][0];
+    int cur_col = cur_index[1] + direction[i][1];
+      while(true)
+    {
+      if(!checkbound(boardSize, cur_row, cur_col)){
+        break;
+      }
+      if(game_state.get_gameBoard(cur_row, cur_col) != player){
+        break;
+      }
+      cur_row += direction[i][0];
+      cur_col += direction[i][1];
+      sum += 1;
+    }
+    cur_row = cur_index[0] - direction[i][0];
+    cur_col = cur_index[1] - direction[i][1];
+      while(true)
+    {
+      if(!checkbound(boardSize, cur_row, cur_col)){
+        break;
+      }
+      if(game_state.get_gameBoard(cur_row, cur_col) != player){
+        break;
+      }
+      cur_row -= direction[i][0];
+      cur_col -= direction[i][1];
+      sum += 1;
+    }
+  }
+  if(sum >= 4){
+    game_state.set_gameOver(true);
+    game_state.set_winner(player);
+  }
 }
