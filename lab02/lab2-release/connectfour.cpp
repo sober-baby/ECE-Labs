@@ -158,10 +158,14 @@ int main()
     if (Rwin == 2)
     {
       cout << "R won the game!" << endl;
+      //exit of the program
+      exit(0);
+
     }
     else if (Ywin == 2)
     {
       cout << "Y won the game!" << endl;
+      exit(0);
     }
   }
 }

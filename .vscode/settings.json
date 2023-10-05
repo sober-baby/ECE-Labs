@@ -64,7 +64,8 @@
     "functional": "cpp",
     "tuple": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "ostream": "cpp"
   },
   "C_Cpp_Runner.msvcSecureNoWarnings": false
 }

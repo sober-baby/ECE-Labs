@@ -31,7 +31,7 @@ class GameState {
   bool turn;     // Whose turn is it?
   int winner;    // who won the game? (Empty if a tie or game still in progress)
   int gameBoard[boardSize][boardSize];  // The game board
-  
+
  public:
   // The constructor. It initializes:
   //     selectedRow to 0
