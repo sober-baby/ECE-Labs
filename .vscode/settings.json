@@ -65,7 +65,8 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "utility": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "iosfwd": "cpp"
   },
   "C_Cpp_Runner.msvcSecureNoWarnings": false
 }
