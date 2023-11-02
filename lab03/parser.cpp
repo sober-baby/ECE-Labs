@@ -26,26 +26,36 @@ Shape **shapesArray = NULL;
 int shapeCount = 0;
 
 // The value of the argument to the maxShapes command
-int max_shapes;
-
+int max_shapes = 0;
 // ECE244 Student: you may want to add the prototype of
 // helper functions you write here
+
+//keep on checking spaces until find a non-space character
+void skipSpace(stringstream &lineStream){
+    if(lineStream.eof()){
+        return;
+    }
+    while (lineStream.peek() == ' '){
+        lineStream.ignore();
+    }
+}
 
 string keywords[] = {"maxShapes", "create", "move", "rotate", "draw", "delete", "all", "circle", "ellipse", "rectangle", "triangle"};
 
 int main()
 {
-    bool error = false;
-    bool iscircle = false;
-    string line;
-    string command;
+    bool error, iscircle;
+    int maxShapesCount = 0;
 
     while (!cin.eof())
     {
+        string command;
+        string line;
         cout << "> "; // Prompt for input
         getline(cin, line);
 
         error = false;
+        iscircle = false;
         // Put the line in a linestream for parsing
         // Making a new sstream for each line so flags etc. are cleared
         stringstream lineStream(line);
@@ -58,7 +68,7 @@ int main()
         }
         
         lineStream >> command;
-        if (lineStream.fail()){
+        if (lineStream.fail() && !cin.eof()){
             cout << "Error: invalid command" << endl;
             continue;
         }
@@ -68,31 +78,35 @@ int main()
 
         if (command == "maxShapes")
         {
-            if (lineStream.eof())
-            {
+            skipSpace(lineStream);
+            if (lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
-            else if (lineStream.peek() == ' ')
-            {
-                cout << "Error: too many arguments" << endl;
-                continue;
-            }
             lineStream >> max_shapes;
-            if (lineStream.fail())
-            {
+            skipSpace(lineStream);
+            if (lineStream.fail()){
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }
-            else if (max_shapes < 1)
-            {
+            }else if(!lineStream.eof()){
+                cout << "Error: too many arguments" << endl;
+                continue;
+            }else if (max_shapes < 1){
                 cout << "Error: invalid value" << endl;
                 continue;
-            }
-            else
-            {
-                shapesArray = new Shape *[max_shapes];
+            }else{
+                if(maxShapesCount == 0){
+                    shapesArray = new Shape *[max_shapes];
+                    maxShapesCount = 1;
+                }else{
+                    for(int i = 0; i < shapeCount; i++){
+                        delete shapesArray[i];
+                    }
+                    delete[] shapesArray;
+                    shapesArray = new Shape *[max_shapes];
+                }
                 cout << "New database: max shapes is " << max_shapes << endl;
+                continue;
             }
         }
         else if (command == "create")
@@ -100,19 +114,21 @@ int main()
             string name, type;
             int x_location, y_location, x_size, y_size;
             // name
-            if (lineStream.eof())
-            {
+            skipSpace(lineStream);
+            if (lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
             lineStream >> name;
-            if (lineStream.fail())
-            {
+            skipSpace(lineStream); 
+            if (lineStream.fail()){
                 cout << "Error: invalid argument" << endl;
+                continue; 
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
                 continue;
-            }
-            for(int i = 0; i < NUM_KEYWORDS; i++){
-                if(name == keywords[i]){
+            for(int i = 0; i < 11; i++){
+                if (name == keywords[i]){
                     cout << "Error: invalid shape name" << endl;
                     error = true;
                     continue;
@@ -135,15 +151,14 @@ int main()
             }
 
             // type
-            if (lineStream.eof())
-            {
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> type;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
                 continue;
             }
             for (int i = 0; i < NUM_TYPES; i++)
@@ -167,15 +182,13 @@ int main()
             }
 
             // xloc
-            if (lineStream.eof())
-            {
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> x_location;
-            if (lineStream.fail())
-            {
+            skipSpace(lineStream);
+            if (lineStream.fail()){
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
                 continue;
             }else if (x_location < 0)
             {
@@ -184,16 +197,14 @@ int main()
             }
 
             // yloc
-            if (lineStream.eof())
-            {
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> y_location;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
             }else if (y_location < 0)
             {
                 cout << "Error: invalid value" << endl;
@@ -202,15 +213,14 @@ int main()
             
 
             // xsize
-            if (lineStream.eof())
-            {
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> x_size;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
                 continue;
             }else if (x_size < 0)
             {
@@ -220,17 +230,17 @@ int main()
 
             // ysize
             lineStream >> y_size;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }else if (iscircle && y_size != x_size)
-            {
-                cout << "Error: invalid value" << endl;
-                continue;
-            }else if (lineStream.peek() == ' ')
-            {
+            }else if(!lineStream.eof()){
                 cout << "Error: too many arguments" << endl;
+                continue;
+            }
+                else if (iscircle && y_size != x_size){
+                cout << "Error: invalid value" << endl;
                 continue;
             }else if (y_size < 0)
             {
@@ -244,6 +254,7 @@ int main()
                 shapesArray[shapeCount] = new Shape(name, type, x_location, x_size, y_location, y_size);
                 shapeCount++;
                 cout << "Created " << name << ": " << type << " " << x_location << " " << y_location << " " << x_size << " " << y_size << endl;
+                continue;
             }
         }
         else if (command == "move")
@@ -251,17 +262,25 @@ int main()
 
             string name;
             int x_location, y_location;
+            
 
             // name
+            skipSpace(lineStream);
             if (lineStream.eof())
             {
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
             lineStream >> name;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
+            }else if(shapeCount == 0){
+                cout << "Error: shape " << name << " not found" << endl;
                 continue;
             }
             int i = 0;
@@ -284,15 +303,14 @@ int main()
             }
 
             // xloc
-            if (lineStream.eof())
-            {
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> x_location;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
                 continue;
             }else if (x_location < 0)
             {
@@ -303,15 +321,18 @@ int main()
 
             // yloc
             lineStream >> y_location;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }else if (lineStream.peek() == ' ')
+            }else if (!lineStream.eof())
             {
                 cout << "Error: too many arguments" << endl;
                 continue;
-            }else if (y_location < 0)
+            }
+                
+            else if (y_location < 0)
             {
                 cout << "Error: invalid value" << endl;
                 continue;
@@ -319,6 +340,7 @@ int main()
                 shapesArray[i]->setXlocation(x_location);
                 shapesArray[i]->setYlocation(y_location);
                 cout << "Moved " << name << " to " << x_location << " " << y_location << endl;
+                continue;
             }
         }
         else if (command == "rotate")
@@ -327,15 +349,24 @@ int main()
             int angle;
             int i = 0;
             // name
+            skipSpace(lineStream);
             if (lineStream.eof())
             {
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
             lineStream >> name;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
+                continue;
+            }else if(lineStream.eof()){
+                cout << "Error: too few arguments" << endl;
+                continue;
+            }else if (shapeCount == 0)
+            {
+                cout << "Error: shape " << name << " not found" << endl;
                 continue;
             }
             while (i < shapeCount)
@@ -355,16 +386,13 @@ int main()
                 continue;
             }
 
-            if (lineStream.eof()){
-                cout << "Error: too few arguments" << endl;
-                continue;
-            }
             lineStream >> angle;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }else if (lineStream.peek() == ' ')
+            }else if (!lineStream.eof())
             {
                 cout << "Error: too many arguments" << endl;
                 continue;
@@ -375,6 +403,7 @@ int main()
             }else{
                 shapesArray[i]->setRotate(angle);
                 cout << "Rotated " << name << " by " << angle << " degrees" << endl;
+                continue;
             }
         }
         else if (command == "draw")
@@ -382,8 +411,8 @@ int main()
             string unknown;
             int i = 0;
             // name
-            if (lineStream.eof())
-            {
+            skipSpace(lineStream);
+            if (lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
@@ -392,27 +421,21 @@ int main()
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }else if(lineStream.eof()){
-                cout << "Error: too few arguments" << endl;
+            }else if(shapeCount == 0 && unknown != "all"){
+                cout << "Error: shape " << unknown << " not found" << endl;
+                continue;
+            }else if(lineStream.peek() == ' '){
+                cout << "Error: too many arguments" << endl;
                 continue;
             }
+            
             if (unknown == "all"){
-                if (lineStream.peek() == ' ')
-                {
-                    cout << "Error: too many arguments" << endl;
-                    continue;
-                }else{
-                    cout << "Drew all shapes";
+                cout << "Drew all shapes" << endl;
+                for (int j = 0; j < shapeCount; j++){
+                    shapesArray[j]->draw();
                 }
-                for (int i = 0; i < shapeCount; i++)
-                {
-                    shapesArray[i]->draw();
-                }
+                continue;
             }else{
-                if (lineStream.peek() == ' '){
-                    cout << "Error: too many arguments" << endl;
-                    continue;
-                }
                 while (i < shapeCount){
                     if (shapesArray[i]->getName() == unknown){
                         break;
@@ -430,11 +453,11 @@ int main()
                     cout << "Drew ";
                 }
                 shapesArray[i]->draw();
+                continue;
             }
             // Once the command has been processed, prompt for the
             // next command
         }else if(command == "delete"){
-
             string unkown;
             int i = 0;
             if (lineStream.eof())
@@ -447,29 +470,22 @@ int main()
             {
                 cout << "Error: invalid argument" << endl;
                 continue;
-            }else if(lineStream.eof()){
-                cout << "Error: too few arguments" << endl;
+            }else if (shapeCount == 0 && unkown != "all"){
+                cout << "Error: shape " << unkown << " not found" << endl;
+                continue;
+            }else if(lineStream.peek() == ' '){
+                cout << "Error: too many arguments" << endl;
                 continue;
             }
             if (unkown == "all"){
-                if (lineStream.peek() == ' ')
+                cout << "Deleted: all shapes " << endl;
+                for (int j = 0; j < shapeCount; j++)
                 {
-                    cout << "Error: too many arguments" << endl;
-                    continue;
-                }else{
-                    cout << "Deleted: all shapes" << endl;
+                    delete shapesArray[j];
                 }
-                for (int i = 0; i < shapeCount; i++)
-                {
-                    delete shapesArray[i];
-                }
-                delete[] shapesArray;
-                shapeCount = 0;
+            shapeCount = 0;
+            continue;
             }else{
-                if (lineStream.peek() == ' '){
-                    cout << "Error: too many arguments" << endl;
-                    continue;
-                }
                 while (i < shapeCount){
                     if (shapesArray[i]->getName() == unkown){
                         break;
@@ -492,11 +508,14 @@ int main()
                     shapesArray[j] = shapesArray[j + 1];
                 }
                 shapeCount--;
+                continue;
             }
         }else{
+            if(!cin.eof()){
             cout << "Error: invalid command" << endl;
+            }
             continue;
         }
     } // End input loop until EOF.
-    return 0;
+}
 }

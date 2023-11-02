@@ -86,6 +86,6 @@ void Shape :: setRotate(int angle){
 //Utility methods // Draws a shape; for this assignment it
 // only prints the information of the shape 
 void Shape :: draw(){
-    cout << "Drew " << name << " " << x_location << " " << y_location << " " << x_size << " " << y_size << endl;
+    cout << name << ": " << type << " " << x_location << " " << y_location << " " << x_size << " " << y_size << endl;
 }
 
