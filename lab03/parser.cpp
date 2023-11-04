@@ -127,6 +127,7 @@ int main()
             }else if(lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
                 continue;
+            }
             for(int i = 0; i < 11; i++){
                 if (name == keywords[i]){
                     cout << "Error: invalid shape name" << endl;
@@ -205,6 +206,7 @@ int main()
                 continue;
             }else if(lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
+                continue;
             }else if (y_location < 0)
             {
                 cout << "Error: invalid value" << endl;
@@ -256,7 +258,7 @@ int main()
                 cout << "Created " << name << ": " << type << " " << x_location << " " << y_location << " " << x_size << " " << y_size << endl;
                 continue;
             }
-        }
+            }
         else if (command == "move")
         {
 
@@ -273,14 +275,11 @@ int main()
             }
             lineStream >> name;
             skipSpace(lineStream);
-            if (lineStream.fail())
-            {
-                cout << "Error: invalid argument" << endl;
+            if (shapeCount == 0){
+                cout << "Error: shape " << name << " not found" << endl;
                 continue;
             }else if(lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
-            }else if(shapeCount == 0){
-                cout << "Error: shape " << name << " not found" << endl;
                 continue;
             }
             int i = 0;
@@ -518,4 +517,4 @@ int main()
         }
     } // End input loop until EOF.
 }
-}
+
