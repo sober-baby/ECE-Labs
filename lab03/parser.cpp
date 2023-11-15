@@ -100,10 +100,11 @@ int main()
                     maxShapesCount = 1;
                 }else{
                     for(int i = 0; i < shapeCount; i++){
-                        delete shapesArray[i];
+                    delete shapesArray[i];
                     }
                     delete[] shapesArray;
                     shapesArray = new Shape *[max_shapes];
+                    shapeCount = 0;
                 }
                 cout << "New database: max shapes is " << max_shapes << endl;
                 continue;
@@ -356,9 +357,8 @@ int main()
             }
             lineStream >> name;
             skipSpace(lineStream);
-            if (lineStream.fail())
-            {
-                cout << "Error: invalid argument" << endl;
+            if (shapeCount == 0){
+                cout << "Error: shape " << name << " not found" << endl;
                 continue;
             }else if(lineStream.eof()){
                 cout << "Error: too few arguments" << endl;
@@ -416,6 +416,7 @@ int main()
                 continue;
             }
             lineStream >> unknown;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
@@ -423,7 +424,7 @@ int main()
             }else if(shapeCount == 0 && unknown != "all"){
                 cout << "Error: shape " << unknown << " not found" << endl;
                 continue;
-            }else if(lineStream.peek() == ' '){
+            }else if(!lineStream.eof()){
                 cout << "Error: too many arguments" << endl;
                 continue;
             }
@@ -459,12 +460,14 @@ int main()
         }else if(command == "delete"){
             string unkown;
             int i = 0;
+            skipSpace(lineStream);
             if (lineStream.eof())
             {
                 cout << "Error: too few arguments" << endl;
                 continue;
             }
             lineStream >> unkown;
+            skipSpace(lineStream);
             if (lineStream.fail())
             {
                 cout << "Error: invalid argument" << endl;
@@ -472,7 +475,7 @@ int main()
             }else if (shapeCount == 0 && unkown != "all"){
                 cout << "Error: shape " << unkown << " not found" << endl;
                 continue;
-            }else if(lineStream.peek() == ' '){
+            }else if(!lineStream.eof()){
                 cout << "Error: too many arguments" << endl;
                 continue;
             }
@@ -501,12 +504,10 @@ int main()
                 }else{
                     cout << "Deleted shape " << unkown << endl;
                 }
+                //All shapes shall be stored in the array (i.e., by having the pointer element of the array point to a Shape object) starting at element 0 for the first shape added and incrementing from there. When a Shape object is deleted, the memory allocated to the object must be freed and the element of the array that used to point to the Shape object must be assigned the value NULL. When a new Shape object is added after another one is deleted, it must be added at location shapeCount. Thus, you must not “pack” the array after deletions or reuse “deleted” locations.\
+                
                 delete shapesArray[i];
-                for (int j = i; j < shapeCount - 1; j++)
-                {
-                    shapesArray[j] = shapesArray[j + 1];
-                }
-                shapeCount--;
+                shapesArray[i] = NULL;
                 continue;
             }
         }else{
