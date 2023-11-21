@@ -66,6 +66,7 @@ class Derived: public Base{
 // base <- derived Derived::Derived(); ->call constructor of base
 //Derived:: Derived(.....): Base(....){} //call constructor of base
 //code to init the added member data
+//This code is executed after call Base()
 
 //d   base member data and derived member data
 //         |(base)       
