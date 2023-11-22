@@ -28,8 +28,13 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
+<<<<<<< HEAD
       "cwd": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lab03",
       "program": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lab03/build/Debug/outDebug",
+=======
+      "cwd": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lecture_materials",
+      "program": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lecture_materials/build/Debug/outDebug",
+>>>>>>> bc6b0b1e253102b5a96c9086bf18eb7b6a3d5d23
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
