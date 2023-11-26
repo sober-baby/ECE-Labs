@@ -33,6 +33,9 @@ bool getInt(stringstream &lineStream, int &iValue);
 bool getDouble(stringstream &lineStream, double &dValue);
 bool foundMoreArgs(stringstream &lineStream);
 
+void update_single();
+void update_multiple();
+
 // Global variables
 RegisterList *registerList; // holding the list of registers
 QueueList *doneList; // holding the list of customers served
@@ -46,6 +49,14 @@ double expTimeElapsed; // time elapsed since the beginning of the simulation
 // register close <ID> <timeElapsed>
 // To add a customer
 // customer <items> <timeElapsed>
+
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//helper function to check if the first customer in the queue of a given register is done, but not dequeue it
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 int main() {
   registerList = new RegisterList();
@@ -76,10 +87,83 @@ int main() {
     getline(cin, line);
   }
 
+ // ToDo********************************************************************************************************************************************************
+  
+
+
+double max = 0;
+double average = 0;
+int count = 0;
+double standard_deviation = 0;
+
+Customer* temp = doneList->get_head();
+while(temp != nullptr) {
+  if(temp->get_departureTime() - temp->get_arrivalTime() > max) {
+    max = temp->get_departureTime() - temp->get_arrivalTime();
+  }
+  average += temp->get_departureTime() - temp->get_arrivalTime();
+  standard_deviation += pow(temp->get_departureTime() - temp->get_arrivalTime(), 2);
+  count ++;
+  temp = temp->get_next();
+}
+average = average / count;
+standard_deviation = sqrt(standard_deviation / count);
+
+
+max = (int) max * 10000;
+max = max / 10000;
+average = (int) average * 10000;
+average = average / 10000;
+standard_deviation = (int) standard_deviation * 10000;
+standard_deviation = standard_deviation / 10000;
+
+
+cout << "Finished at time " << expTimeElapsed << endl;
+cout << "Statistics:" << endl;
+cout << "Maximum wait time: " << max << endl;
+cout << "Average wait time: " << average << endl;
+cout << "Standard Deviation of wait time: " << standard_deviation << endl;
+
+
+
+
+  Register* deleteReg = registerList->get_head();
+  Customer* deleteCustomer = doneList->get_head();
+  while(deleteCustomer != nullptr) {
+    Customer* next = deleteCustomer->get_next();
+    delete deleteCustomer;
+    deleteCustomer = next;
+  }
+  deleteCustomer = singleQueue->get_head();
+  while(deleteCustomer != nullptr) {
+    Customer* next = deleteCustomer->get_next();
+    delete deleteCustomer;
+    deleteCustomer = next;
+  }
+  while(deleteReg != nullptr) {
+    Register* next = deleteReg->get_next();
+    deleteCustomer = deleteReg->get_queue_list()->get_head();
+    while(deleteCustomer != nullptr) {
+      Customer* cnext = deleteCustomer->get_next();
+      delete deleteCustomer;
+      deleteCustomer = cnext;
+    }
+    delete deleteReg->get_queue_list();
+    delete deleteReg;
+    deleteReg = next;
+  }
+
   // You have to make sure all dynamically allocated memory is freed 
   // before return 0
+  delete registerList;
+  delete doneList;
+  delete singleQueue;
   return 0;
+
+  
 }
+
+
 
 string getMode() {
   string mode;
@@ -94,7 +178,6 @@ string getMode() {
   } else if (mode == "multiple") {
     cout << "Simulating multiple queues ..." << endl;
   }
-
   return mode;
 }
 
@@ -109,10 +192,33 @@ void addCustomer(stringstream &lineStream, string mode) {
     cout << "Error: too many arguments." << endl;
     return;
   }
+  
+  Customer* newCustomer = new Customer(timeElapsed+expTimeElapsed, items);
+  expTimeElapsed += timeElapsed;
+
   // Depending on the mode of the simulation (single or multiple),
   // add the customer to the single queue or to the register with
   // fewest items
-  
+  if(mode == "single") {
+    //update the single queue
+    update_single();
+    cout << "A customer entered " << endl;
+    if (registerList->get_free_register() == nullptr) {
+      cout << "No free registers " << endl;
+    }
+    singleQueue->enqueue(newCustomer);
+    update_single();
+  }
+  else if(mode == "multiple") {
+    update_multiple();
+    cout << "A customer entered " << endl;
+    cout << "Queued a customer with quickest register " <<  registerList->get_min_items_register()->get_ID() << endl;
+    registerList->get_min_items_register()->get_queue_list()->enqueue(newCustomer);
+    update_multiple();
+  } 
+  else {
+    cout << "Invalid mode" << endl;
+  }
 }
 
 void parseRegisterAction(stringstream &lineStream, string mode) {
@@ -128,6 +234,7 @@ void parseRegisterAction(stringstream &lineStream, string mode) {
 }
 
 void openRegister(stringstream &lineStream, string mode) {
+
   int ID;
   double secPerItem, setupTime, timeElapsed;
   // convert strings to int and double
@@ -142,13 +249,35 @@ void openRegister(stringstream &lineStream, string mode) {
     return;
   }
 
-  // Check if the register is already open
-  // If it's open, print an error message
-  // Otherwise, open the register
-  // If we were simulating a single queue, 
-  // and there were customers in line, then 
-  // assign a customer to the new register
-  
+   // Check if the register is already open
+   // If it's open, print an error message
+   // Otherwise, open the register
+
+   // If we were simulating a single queue, 
+   // and there were customers in line, then 
+   // assign a customer to the new register
+    if(registerList->foundRegister(ID)) {
+        cout << "Error: register " << ID << " is already open." << endl;
+        return;
+    }
+    Register *newRegister = new Register(ID, secPerItem, setupTime, timeElapsed+expTimeElapsed);
+    registerList->enqueue(newRegister);
+    expTimeElapsed += timeElapsed;
+    cout << "Opened register " << ID << endl;
+    //check if the mode is single or multiple
+    if (mode == "single")
+    {
+        update_single();
+    }
+    //not sure if should check multiple, will get back to here 
+    else if (mode == "multiple")
+    {
+        update_multiple();
+    }
+    else
+    {
+        cout << "Invalid mode" << endl;
+    }
 }
 
 void closeRegister(stringstream &lineStream, string mode) {
@@ -163,11 +292,101 @@ void closeRegister(stringstream &lineStream, string mode) {
     cout << "Error: too many arguments" << endl;
     return;
   }
+
   // Check if the register is open
   // If it is open dequeue it and free it's memory
   // Otherwise, print an error message 
-  
+  if(!(registerList->foundRegister(ID))) {
+    cout << "Error: register " << ID << " is not open" << endl;
+    return;
+  }
+  expTimeElapsed += timeElapsed;
+  if (mode == "single")
+    {
+        update_single();
+    }
+    //not sure if should check multiple, will get back to here 
+  else if (mode == "multiple")
+    {
+        update_multiple();
+    }
+  else{
+        cout << "Invalid mode" << endl;
+  }
+
+  delete registerList->dequeue(ID);
+  cout << "Register " << ID << " closed." << endl;
+  return;
 }
+
+
+
+void update_single() {
+  while(singleQueue->get_head() != nullptr){
+    Register* empty = registerList->get_free_register();
+    if(empty != nullptr) {
+      empty->get_queue_list()->enqueue(singleQueue->dequeue());
+      cout << "Queued a customer with free register " <<  empty->get_ID() << endl;
+    }else{
+      break;
+    }
+  }
+  Register* temp = registerList->get_head();
+  Register* min = nullptr;
+  if (temp == nullptr) {
+    return;
+  }
+  double time = expTimeElapsed;
+
+  while(temp != nullptr) {
+    if(temp -> get_queue_list()->get_head() != nullptr) {
+      if (time >= temp->calculateDepartTime()) {
+        time = temp->calculateDepartTime();
+        min = temp;
+      }
+    }
+    temp = temp->get_next();
+  }
+
+  if (min != nullptr){
+    min->departCustomer(doneList);
+    cout << "Departed a customer at register ID " <<  min->get_ID() << " at " << min->get_availableTime() << endl;
+    update_single();
+  }
+  return;
+}
+
+void update_multiple() {
+
+  Register* temp = registerList->get_head();
+  Register* min = nullptr;
+  if (temp == nullptr) {
+    return;
+  }
+  double time = expTimeElapsed;
+
+
+  while(temp != nullptr) {
+    if(temp -> get_queue_list()->get_head() != nullptr) {
+      if (time >= temp->calculateDepartTime()) {
+        time = temp->calculateDepartTime();
+        min = temp;
+      }
+    }
+    temp = temp->get_next();
+  }
+
+  if (min == nullptr) {
+    return;
+  }
+
+  min->departCustomer(doneList);
+  cout << "Departed a customer at register ID " <<  min->get_ID() << " at " << min->get_availableTime() << endl;
+  update_multiple();
+}
+
+
+
 
 bool getInt(stringstream &lineStream, int &iValue) {
   // Reads an int from the command line
