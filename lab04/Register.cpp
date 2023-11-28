@@ -78,7 +78,7 @@ void Register::departCustomer(QueueList* doneList) {
   }
   availableTime = calculateDepartTime();
   Customer* customer = queue->dequeue();
-  customer->set_departureTime(calculateDepartTime());
+  customer->set_departureTime(availableTime);
   doneList->enqueue(customer);
 }
 

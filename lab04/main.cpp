@@ -92,72 +92,35 @@ int main() {
 
 
 double max = 0;
-double average = 0;
+double avg = 0;
 int count = 0;
-double standard_deviation = 0;
+double s_d = 0;
 
 Customer* temp = doneList->get_head();
 while(temp != nullptr) {
   if(temp->get_departureTime() - temp->get_arrivalTime() > max) {
     max = temp->get_departureTime() - temp->get_arrivalTime();
   }
-  average += temp->get_departureTime() - temp->get_arrivalTime();
-  standard_deviation += pow(temp->get_departureTime() - temp->get_arrivalTime(), 2);
+  avg += temp->get_departureTime() - temp->get_arrivalTime();
   count ++;
   temp = temp->get_next();
 }
-average = average / count;
-standard_deviation = sqrt(standard_deviation / count);
+avg = avg / count;
+temp = doneList->get_head();
+while(temp != nullptr) {
+  s_d += pow(temp->get_departureTime() - temp->get_arrivalTime() - avg, 2);
+  temp = temp->get_next();
+}
 
+s_d = sqrt(s_d / count);
 
-max = (int) max * 10000;
-max = max / 10000;
-average = (int) average * 10000;
-average = average / 10000;
-standard_deviation = (int) standard_deviation * 10000;
-standard_deviation = standard_deviation / 10000;
-
-
+cout << endl;
 cout << "Finished at time " << expTimeElapsed << endl;
 cout << "Statistics:" << endl;
 cout << "Maximum wait time: " << max << endl;
-cout << "Average wait time: " << average << endl;
-cout << "Standard Deviation of wait time: " << standard_deviation << endl;
+cout << "Average wait time: " << avg << endl;
+cout << "Standard Deviation of wait time: " << s_d << endl;
 
-
-
-
-  Register* deleteReg = registerList->get_head();
-  Customer* deleteCustomer = doneList->get_head();
-  while(deleteCustomer != nullptr) {
-    Customer* next = deleteCustomer->get_next();
-    delete deleteCustomer;
-    deleteCustomer = next;
-  }
-  deleteCustomer = singleQueue->get_head();
-  while(deleteCustomer != nullptr) {
-    Customer* next = deleteCustomer->get_next();
-    delete deleteCustomer;
-    deleteCustomer = next;
-  }
-  while(deleteReg != nullptr) {
-    Register* next = deleteReg->get_next();
-    deleteCustomer = deleteReg->get_queue_list()->get_head();
-    while(deleteCustomer != nullptr) {
-      Customer* cnext = deleteCustomer->get_next();
-      delete deleteCustomer;
-      deleteCustomer = cnext;
-    }
-    delete deleteReg->get_queue_list();
-    delete deleteReg;
-    deleteReg = next;
-  }
-
-  // You have to make sure all dynamically allocated memory is freed 
-  // before return 0
-  delete registerList;
-  delete doneList;
-  delete singleQueue;
   return 0;
 
   
@@ -257,7 +220,7 @@ void openRegister(stringstream &lineStream, string mode) {
    // and there were customers in line, then 
    // assign a customer to the new register
     if(registerList->foundRegister(ID)) {
-        cout << "Error: register " << ID << " is already open." << endl;
+        cout << "Error: register " << ID << " is already open" << endl;
         return;
     }
     Register *newRegister = new Register(ID, secPerItem, setupTime, timeElapsed+expTimeElapsed);
@@ -267,9 +230,9 @@ void openRegister(stringstream &lineStream, string mode) {
     //check if the mode is single or multiple
     if (mode == "single")
     {
+      //assign the 
         update_single();
     }
-    //not sure if should check multiple, will get back to here 
     else if (mode == "multiple")
     {
         update_multiple();
@@ -305,7 +268,6 @@ void closeRegister(stringstream &lineStream, string mode) {
     {
         update_single();
     }
-    //not sure if should check multiple, will get back to here 
   else if (mode == "multiple")
     {
         update_multiple();
@@ -315,14 +277,14 @@ void closeRegister(stringstream &lineStream, string mode) {
   }
 
   delete registerList->dequeue(ID);
-  cout << "Register " << ID << " closed." << endl;
+  cout << "Closed" << "register " << ID << endl;
   return;
 }
 
 
 
 void update_single() {
-  while(singleQueue->get_head() != nullptr){
+  while (singleQueue->get_head() != nullptr){
     Register* empty = registerList->get_free_register();
     if(empty != nullptr) {
       empty->get_queue_list()->enqueue(singleQueue->dequeue());
@@ -331,17 +293,18 @@ void update_single() {
       break;
     }
   }
+
   Register* temp = registerList->get_head();
   Register* min = nullptr;
   if (temp == nullptr) {
     return;
   }
-  double time = expTimeElapsed;
+  double cur_time = expTimeElapsed;
 
-  while(temp != nullptr) {
-    if(temp -> get_queue_list()->get_head() != nullptr) {
-      if (time >= temp->calculateDepartTime()) {
-        time = temp->calculateDepartTime();
+  while(temp!= nullptr) {
+    if(temp->get_queue_list()->get_head() != nullptr) {
+      if (cur_time >= temp->calculateDepartTime()) {
+        cur_time = temp->calculateDepartTime();
         min = temp;
       }
     }
@@ -353,6 +316,7 @@ void update_single() {
     cout << "Departed a customer at register ID " <<  min->get_ID() << " at " << min->get_availableTime() << endl;
     update_single();
   }
+
   return;
 }
 
