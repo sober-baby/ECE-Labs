@@ -12,7 +12,7 @@ Customer::Customer(double arrival, int items) {
 
 Customer::~Customer() {}
 
-double Customer::get_arrivalTime() { return arrivalTime; }
+double Customer::get_arrivalTime() {return arrivalTime; }
 
 double Customer::get_departureTime() { return departureTime; }
 
