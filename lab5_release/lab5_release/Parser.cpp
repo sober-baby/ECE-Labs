@@ -37,6 +37,7 @@ ShapesDB sdb(MAX_SHAPES,MAX_SHAPE_TYPES);
 // ECE244 Student: add your parser function prototypes here
 Shape* parseCircleCommand(stringstream& line);
 
+
 int main () {
 
     // Register the command parser call back functions
@@ -78,6 +79,9 @@ Shape* parseCircleCommand(stringstream& line) {
     // Create the shape object and return a pointer to it
     Shape* myShape = (Shape*) new Circle(name, xcent, ycent, radius);
     cout << "created circle" << endl;
+
     return myShape;
+
+
 }
 

@@ -20,4 +20,80 @@ using namespace std;
 #include "Triangle.h"
 
 // Build a Triangle object
+Triangle::Triangle(string n, float xcent, float ycent, float x1, float y1, float x2, float y2, float x3, float y3):Shape(n, xcent, ycent) {
+    this->x1 = x1;
+    this->y1 = y1;
+    this->x2 = x2;
+    this->y2 = y2;
+    this->x3 = x3;
+    this->y3 = y3;
+}
+
+Triangle::~Triangle() {
+    // Nothing to do
+}
+
+// Accessor
+float Triangle::getX1() const {
+    return x1;
+}
+float Triangle::getY1() const {
+    return y1;  
+}
+float Triangle::getX2() const {
+    return x2;
+}
+float Triangle::getY2() const {
+    return y2;
+}
+float Triangle::getX3() const {
+    return x3;
+}
+float Triangle::getY3() const {
+    return y3;
+}
+
+// Mutator
+void Triangle::setX1(float x1) {
+    this->x1 = x1;
+}
+void Triangle::setY1(float y1) {
+    this->y1 = y1;
+}
+void Triangle::setX2(float x2) {
+    this->x2 = x2;
+}
+void Triangle::setY2(float y2) {
+    this->y2 = y2;
+}
+void Triangle::setX3(float x3) {
+    this->x3 = x3;
+}
+void Triangle::setY3(float y3) {
+    this->y3 = y3;
+}
+
+void Triangle:: draw() const {
+    // Set floating point printing to fixed point with 2 decimals
+    cout << std::fixed;
+    cout << std::setprecision(2);
+    
+    // Print the information
+    cout << "triangle: " << name << " "
+         << x_centre << " " << y_centre
+         << " " << x1 << " " << y1
+         << " " << x2 << " " << y2
+         << " " << x3 << " " << y3
+         << " " << computeArea()
+         << endl;
+}
+
+float Triangle::computeArea() const {
+    return (0.5 * abs((x1*y2 + x2*y3 + x3*y1) - (x1*y3 + x2*y1 + x3*y2)));
+}
+
+Shape* Triangle::clone() const {
+    return (new Triangle(*this));
+}
+
 
