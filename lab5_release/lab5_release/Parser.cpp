@@ -34,8 +34,12 @@ using namespace std;
 // Create a database instance; making it global to simplify student code
 ShapesDB sdb(MAX_SHAPES,MAX_SHAPE_TYPES);
 
+
 // ECE244 Student: add your parser function prototypes here
 Shape* parseCircleCommand(stringstream& line);
+Shape* parseRectangleCommand(stringstream& line);
+Shape* parseTriangleCommand(stringstream& line);
+
 
 
 int main () {
@@ -79,9 +83,71 @@ Shape* parseCircleCommand(stringstream& line) {
     // Create the shape object and return a pointer to it
     Shape* myShape = (Shape*) new Circle(name, xcent, ycent, radius);
     cout << "created circle" << endl;
-
     return myShape;
 
 
 }
 
+
+Shape* parseRectangleCommand(stringstream& line) {
+    string name;
+    float xcent;
+    float ycent;
+    float width;
+    float height;
+    line >> name >> xcent >> ycent >> width >> height;
+    
+    // Do a simple error check
+    if (line.fail()) {
+        cout << "Error: invalid input" << endl;
+        return nullptr;
+    }
+    
+    // Check to see if name is a reserved word
+    if (sdb.isReserved(name)) {
+        cout << "Error: " << name << " is a reserved word" << endl;
+        return nullptr;
+    }
+    
+    // Check if a shape with this name already exists
+    if (sdb.shapeExists(name)) {
+        cout << "Error: a shape with the name " << name << " already exists" << endl;
+        return nullptr;
+    }
+
+    // Create the shape object and return a pointer to it
+    Shape* myShape = (Shape*) new Rectangle(name, xcent, ycent, width, height);
+    cout << "created rectangle" << endl;
+    return myShape;
+}
+
+Shape* parseTriangleCommand(stringstream& line) {
+    string name;
+    float xcent;
+    float ycent;
+    float side;
+    line >> name >> xcent >> ycent >> side;
+    
+    // Do a simple error check
+    if (line.fail()) {
+        cout << "Error: invalid input" << endl;
+        return nullptr;
+    }
+    
+    // Check to see if name is a reserved word
+    if (sdb.isReserved(name)) {
+        cout << "Error: " << name << " is a reserved word" << endl;
+        return nullptr;
+    }
+    
+    // Check if a shape with this name already exists
+    if (sdb.shapeExists(name)) {
+        cout << "Error: a shape with the name " << name << " already exists" << endl;
+        return nullptr;
+    }
+
+    // Create the shape object and return a pointer to it
+    Shape* myShape = (Shape*) new Triangle(name, xcent, ycent, side);
+    cout << "created triangle" << endl;
+    return myShape;
+}

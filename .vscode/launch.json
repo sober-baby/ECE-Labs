@@ -28,8 +28,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lecture_materials",
-      "program": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lecture_materials/build/Debug/outDebug",
+      "cwd": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lab5_release/lab5_release",
+      "program": "c:/Users/James/OneDrive/Documents/GitHub/ECE/lab5_release/lab5_release/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
