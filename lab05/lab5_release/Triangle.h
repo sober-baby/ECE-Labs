@@ -32,7 +32,7 @@ private:
     float y3;
         // Destructor
 public:
-    Triangle(string n, float x1, float y1, float x2, float y2, float x3, float y3);
+    Triangle(string n, float xcent, float ycent, float x1, float y1, float x2, float y2, float x3, float y3);
 
     virtual ~Triangle();
 
