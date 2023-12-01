@@ -27,6 +27,8 @@ using namespace std;
 #include "ShapesDB.h"
 
 #include "Circle.h"
+#include "Rectangle.h"
+#include "Triangle.h"
 
 #define MAX_SHAPES 1000
 #define MAX_SHAPE_TYPES 10
@@ -123,31 +125,43 @@ Shape* parseRectangleCommand(stringstream& line) {
 
 Shape* parseTriangleCommand(stringstream& line) {
     string name;
+    float x1;
+    float y1;
+    float x2;
+    float y2;
+    float x3;
+    float y3;
     float xcent;
     float ycent;
-    float side;
-    line >> name >> xcent >> ycent >> side;
-    
+    line >> name >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+
     // Do a simple error check
     if (line.fail()) {
         cout << "Error: invalid input" << endl;
         return nullptr;
     }
-    
+
     // Check to see if name is a reserved word
     if (sdb.isReserved(name)) {
         cout << "Error: " << name << " is a reserved word" << endl;
         return nullptr;
     }
-    
+
     // Check if a shape with this name already exists
     if (sdb.shapeExists(name)) {
         cout << "Error: a shape with the name " << name << " already exists" << endl;
         return nullptr;
     }
 
+    xcent = (x1 + x2 + x3) / 3;
+    ycent = (y1 + y2 + y3) / 3;
+
+
+
     // Create the shape object and return a pointer to it
-    Shape* myShape = (Shape*) new Triangle(name, xcent, ycent, side);
+
+    
+    Shape* myShape = (Shape*) new Triangle(name, x1, y1, x2, y2, x3, y3);
     cout << "created triangle" << endl;
     return myShape;
 }
