@@ -48,6 +48,9 @@ int main () {
 
     // Register the command parser call back functions
     sdb.registerShapeType("circle", &parseCircleCommand);
+    sdb.registerShapeType("rectangle", &parseRectangleCommand);
+    sdb.registerShapeType("triangle", &parseTriangleCommand);
+    
     
     // Invoke the parser of the DB
     // No new commands should be registered after this
@@ -160,8 +163,8 @@ Shape* parseTriangleCommand(stringstream& line) {
 
     // Create the shape object and return a pointer to it
 
-    
-    Shape* myShape = (Shape*) new Triangle(name, x1, y1, x2, y2, x3, y3);
+    //manually set the centre of the triangle to be the average of the three points
+    Shape* myShape = (Shape*) new Triangle(name, xcent, ycent, x1, y1, x2, y2, x3, y3);
     cout << "created triangle" << endl;
     return myShape;
 }

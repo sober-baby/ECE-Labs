@@ -20,7 +20,7 @@ using namespace std;
 #include "Triangle.h"
 
 // Build a Triangle object
-Triangle::Triangle(string n, float x1, float y1, float x2, float y2, float x3, float y3):Shape(n, xcent, ycent) {
+Triangle::Triangle(string n, float xcent, float ycent, float x1, float y1, float x2, float y2, float x3, float y3):Shape(n, xcent, ycent) {
     this->x1 = x1;
     this->y1 = y1;
     this->x2 = x2;
